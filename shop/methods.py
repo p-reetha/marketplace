@@ -38,8 +38,7 @@ def get_products(category):
             "prod_name": product.prod_name,
             "prod_price": product.price,
             "prod_seller": product.seller,
-            "prod_quantity": product.prod_quantity,
-            "prod_availability": product.prod_availability}
+            "prod_quantity": product.prod_quantity}
         dictionaries_list.append(product_dict)
     return dictionaries_list
 
