@@ -28,4 +28,4 @@ class Cart(Base):
     cart_item_id = Column(Integer, primary_key=True)
     buyer_id = Column(Integer, ForeignKey('buyers.buyer_id'))
     prod_id = Column(Integer, ForeignKey('products.prod_id'))
-    quantity = Column(Integer)
+    desired_quantity = Column(Integer, unique=False, nullable=False)
