@@ -49,14 +49,14 @@ def logout():
 @app.route('/categories', methods=['GET'])
 def categories():
     categories_list = get_categories_list()
-    return str(categories_list)
+    return render_template('categories.html', list=categories_list)
 
 
 @app.route('/products', methods=['GET'])
 def products():
     category = request.form['category']
     list_of_products = get_products(category)
-    return str(list_of_products)
+    return render_template('products.html', list=list_of_products)
 
 
 @app.route('/cart', methods=['POST'])
@@ -69,7 +69,8 @@ def add_to_cart():
         if is_product_added == 'true':
             return redirect(url_for('categories'))
         else:
-            return is_product_added
+            return render_template('cart.html', msg=is_product_added)
+    return render_template('cart.html')
 
 
 @app.route('/cart', methods=['GET'])
@@ -78,9 +79,10 @@ def view_cart():
         buyer_id = session['buyer_id']
         products_list = products_in_cart(buyer_id)
         if products_list != 0:
-            return products_list
+            return render_template('cart.html', list=products_list)
         else:
-            return 'cart is empty'
+            return render_template('cart.html', msg='cart is empty')
+    return render_template('cart.html')
 
 
 @app.route('/cart', methods=['DELETE'])
@@ -91,6 +93,7 @@ def remove_from_cart():
         is_product_deleted = remove_product_from_cart(cart_item_id, buyer_id)
         if is_product_deleted == 'true':
             return render_template('cart.html')
+    return render_template('cart.html')
 
 
 @app.route('/cart', methods=['PUT'])
@@ -103,7 +106,8 @@ def update_cart():
         if is_quantity_updated == 'true':
             return render_template('cart.html')
         else:
-            return is_quantity_updated
+            return render_template('cart.html', msg=is_quantity_updated)
+    return render_template('cart.html')
 
 
 @app.route('/buy', methods=['PUT'])
@@ -116,6 +120,7 @@ def buy_product():
         if is_product_purchased == 'true':
             return redirect(url_for('categories'))
         else:
-            return is_product_purchased
+            return render_template('buy.html', msg=is_product_purchased)
+    return render_template('buy.html')
 
 
