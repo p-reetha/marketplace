@@ -1,18 +1,44 @@
 from shop.db_connection import connect_db
 from shop.models import Buyer, Product, Cart
+import re
 dictionaries_list = []
 
 db = connect_db()
 
 
-def validate_user(buyer_name, mail_id, phone_no, password, confirm):
-    if password == confirm:
-        obj = Buyer(buyer_name=buyer_name, mail_id=mail_id, phone_no=phone_no, password=password)
-        db.add(obj)
-        db.commit()
+def validate_name(name):
+    if re.match(r'^[a-zA-Z]+$', name):
         return 'true'
     else:
         return 'false'
+
+
+def validate_mail_id(mail_id):
+    if re.match(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', mail_id):
+        return 'true'
+    else:
+        return 'false'
+
+
+def validate_phone_no(phone_no):
+    if re.match(r'^\d{10}$', phone_no):
+        return 'true'
+    else:
+        return 'false'
+
+
+def confirm_password(password, confirm):
+    if password == confirm:
+        return 'true'
+    else:
+        return 'false'
+
+
+def save_user(buyer_name, mail_id, phone_no, password):
+    obj = Buyer(buyer_name=buyer_name, mail_id=mail_id, phone_no=phone_no, password=password)
+    db.add(obj)
+    db.commit()
+    return 'true'
 
 
 def is_user_exists(mail_id, password):
@@ -29,7 +55,6 @@ def get_categories_list():
 
 
 def get_products(category):
-    global product_dict
     prod_list = db.query(Product).filter_by(category=category, prod_availability='yes').all()
     for product in prod_list:
         product_dict = {
