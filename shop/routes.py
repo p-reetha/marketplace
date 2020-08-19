@@ -16,9 +16,23 @@ def signup():
         phone_no = request.form.get('phone_no')
         password = request.form.get('password')
         confirm = request.form.get('confirm')
-        sign_up = validate_user(buyer_name, mail_id, phone_no, password, confirm)
-        if sign_up == 'true':
-            return redirect(url_for('login'))
+        valid_name = validate_name(buyer_name)
+        valid_mail_id = validate_mail_id(mail_id)
+        valid_phone_no = validate_phone_no(phone_no)
+        password_confirmed = confirm_password(password, confirm)
+        if valid_name == 'true' and valid_mail_id == 'true' and valid_phone_no == 'true' and password_confirmed == 'true':
+            sign_up = save_user(buyer_name, mail_id, phone_no, password)
+            if sign_up == 'true':
+                return redirect(url_for('login'))
+        elif valid_name == 'false':
+            flash("Invalid user name", "danger")
+            return render_template('signup.html')
+        elif valid_mail_id == 'false':
+            flash("Invalid mail id", "danger")
+            return render_template('signup.html')
+        elif valid_phone_no == 'false':
+            flash("Invalid phone number", "danger")
+            return render_template('signup.html')
         else:
             flash("password does not match", "danger")
             return render_template('signup.html')
@@ -43,6 +57,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    session.clear()
     return render_template('home.html')
 
 
