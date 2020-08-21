@@ -1,5 +1,8 @@
 from shop import app
 from flask import request, render_template, redirect, url_for, flash, session
+from shop.buyer_model import*
+from shop.product_model import*
+from shop.cart_model import*
 from shop.methods import*
 
 
@@ -92,9 +95,9 @@ def add_to_cart():
 def view_cart():
     if request.method == 'GET':
         buyer_id = session['buyer_id']
-        products_list = products_in_cart(buyer_id)
-        if products_list != 0:
-            return render_template('cart.html', list=products_list)
+        cart_products_list = products_in_cart(buyer_id)
+        if cart_products_list != 0:
+            return render_template('cart.html', list=cart_products_list)
         else:
             return render_template('cart.html', msg='cart is empty')
     return render_template('cart.html')
@@ -103,9 +106,9 @@ def view_cart():
 @app.route('/cart', methods=['DELETE'])
 def remove_from_cart():
     if request.method == 'DELETE':
-        cart_item_id = request.form['cart_item_id']
+        prod_id = request.form['prod_id']
         buyer_id = session['buyer_id']
-        is_product_deleted = remove_product_from_cart(cart_item_id, buyer_id)
+        is_product_deleted = remove_product_from_cart(prod_id, buyer_id)
         if is_product_deleted == 'true':
             return render_template('cart.html')
     return render_template('cart.html')
@@ -114,10 +117,10 @@ def remove_from_cart():
 @app.route('/cart', methods=['PUT'])
 def update_cart():
     if request.method == 'PUT':
-        cart_item_id = request.form['cart_item_id']
+        prod_id = request.form['prod_id']
         desired_quantity = request.form['desired_quantity']
         buyer_id = session['buyer_id']
-        is_quantity_updated = update_cart_product_quantity(cart_item_id, desired_quantity, buyer_id)
+        is_quantity_updated = update_cart_product_quantity(prod_id, desired_quantity, buyer_id)
         if is_quantity_updated == 'true':
             return render_template('cart.html')
         else:
@@ -128,10 +131,10 @@ def update_cart():
 @app.route('/buy', methods=['PUT'])
 def buy_product():
     if request.method == 'PUT':
-        cart_item_id = request.form['cart_item_id']
+        prod_id = request.form['prod_id']
         desired_quantity = request.form['desired_quantity']
         buyer_id = session['buyer_id']
-        is_product_purchased = product_to_buy(cart_item_id, desired_quantity, buyer_id)
+        is_product_purchased = product_to_buy(prod_id, desired_quantity, buyer_id)
         if is_product_purchased == 'true':
             return redirect(url_for('categories'))
         else:
