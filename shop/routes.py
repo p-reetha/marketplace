@@ -3,7 +3,6 @@ from flask import request, render_template, redirect, url_for, flash, session
 from shop.buyer_model import*
 from shop.product_model import*
 from shop.cart_model import*
-from shop.methods import*
 
 
 @app.route('/')
@@ -95,7 +94,7 @@ def add_to_cart():
 def view_cart():
     if request.method == 'GET':
         buyer_id = session['buyer_id']
-        cart_products_list = products_in_cart(buyer_id)
+        cart_products_list = get_products_in_cart(buyer_id)
         if cart_products_list != 0:
             return render_template('cart.html', list=cart_products_list)
         else:
