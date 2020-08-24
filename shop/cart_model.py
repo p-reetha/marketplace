@@ -3,6 +3,7 @@ from shop.product_model import Product
 from sqlalchemy import Integer, Column, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
+products_in_cart = []
 
 db = connect_db()
 
@@ -25,9 +26,18 @@ def add_product_to_cart(prod_id, desired_quantity, buyer_id):
     return 'true'
 
 
-def products_in_cart(buyer_id):
-    cart_prod_list = db.query(Cart).add_columns(Cart.desired_quantity, Product.prod_id, Product.category, Product.prod_name, Product.price).filter(Product.prod_id == Cart.prod_id).filter(Cart.buyer_id == buyer_id).all()
-    return cart_prod_list
+def get_products_in_cart(buyer_id):
+    cart_products_list = db.query(Cart).add_columns(Product.category, Product.prod_name, Product.price, Product.seller).filter(Product.prod_id == Cart.prod_id).filter(Cart.buyer_id == buyer_id).all()
+    for product in cart_products_list:
+        product_dict = {
+            "prod_id": product[0].prod_id,
+            "category": product[1],
+            "prod_name": product[2],
+            "prod_price": product[3],
+            "prod_seller": product[4],
+            "desired_quantity": product[0].desired_quantity}
+        products_in_cart.append(product_dict)
+    return products_in_cart
 
 
 def remove_product_from_cart(prod_id, buyer_id):
