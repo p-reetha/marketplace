@@ -2,6 +2,7 @@ from shop.db_connection import connect_db
 from sqlalchemy import Integer, String, Column
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
+categories_list = []
 products_list = []
 
 db = connect_db()
@@ -20,7 +21,10 @@ class Product(Base):
 
 def get_categories_list():
     cat_list = db.query(Product.category).group_by(Product.category).all()
-    return cat_list
+    for category in cat_list:
+        category = category[0].capitalize()
+        categories_list.append(category)
+    return categories_list
 
 
 def get_products(category):
