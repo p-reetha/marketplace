@@ -64,13 +64,13 @@ def logout():
 
 
 @app.route('/categories', methods=['GET'])
-def categories():
-    categories_list = get_categories_list()
-    return render_template('categories.html', list=categories_list)
+def get_categories():
+    categories = get_categories_list()
+    return render_template('categories.html', list=categories)
 
 
 @app.route('/products', methods=['GET'])
-def products():
+def get_products_of_selected_category():
     category = request.form.get('category')
     list_of_products = get_products(category)
     return render_template('products.html', list=list_of_products)
