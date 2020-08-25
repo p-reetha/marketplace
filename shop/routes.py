@@ -71,7 +71,7 @@ def categories():
 
 @app.route('/products', methods=['GET'])
 def products():
-    category = request.form['category']
+    category = request.form.get('category')
     list_of_products = get_products(category)
     return render_template('products.html', list=list_of_products)
 
@@ -79,8 +79,8 @@ def products():
 @app.route('/cart', methods=['POST'])
 def add_to_cart():
     if request.method == 'POST':
-        prod_id = request.form['prod_id'] # need to pass hidden value of prod_id in UI
-        desired_quantity = request.form['desired_quantity']
+        prod_id = request.form.get('prod_id') # need to pass hidden value of prod_id in UI
+        desired_quantity = request.form.get('desired_quantity')
         buyer_id = session['buyer_id']
         is_product_added = add_product_to_cart(prod_id, desired_quantity, buyer_id)
         if is_product_added == 'true':
@@ -95,6 +95,7 @@ def view_cart():
     if request.method == 'GET':
         buyer_id = session['buyer_id']
         cart_products_list = get_products_in_cart(buyer_id)
+        print(cart_products_list)
         if cart_products_list != 0:
             return render_template('cart.html', list=cart_products_list)
         else:
@@ -105,7 +106,7 @@ def view_cart():
 @app.route('/cart', methods=['DELETE'])
 def remove_from_cart():
     if request.method == 'DELETE':
-        prod_id = request.form['prod_id']
+        prod_id = request.form.get('prod_id')
         buyer_id = session['buyer_id']
         is_product_deleted = remove_product_from_cart(prod_id, buyer_id)
         if is_product_deleted == 'true':
@@ -116,7 +117,7 @@ def remove_from_cart():
 @app.route('/cart', methods=['PUT'])
 def update_cart():
     if request.method == 'PUT':
-        prod_id = request.form['prod_id']
+        prod_id = request.form.get('prod_id')
         desired_quantity = request.form['desired_quantity']
         buyer_id = session['buyer_id']
         is_quantity_updated = update_cart_product_quantity(prod_id, desired_quantity, buyer_id)
@@ -127,17 +128,26 @@ def update_cart():
     return render_template('cart.html')
 
 
-@app.route('/buy', methods=['PUT'])
-def buy_product():
-    if request.method == 'PUT':
-        prod_id = request.form['prod_id']
-        desired_quantity = request.form['desired_quantity']
+@app.route('/buy', methods=['GET'])
+def check_cart_products_availability():
+    if request.method == 'GET':
         buyer_id = session['buyer_id']
-        is_product_purchased = product_to_buy(prod_id, desired_quantity, buyer_id)
-        if is_product_purchased == 'true':
-            return redirect(url_for('categories'))
+        cart_products = get_products_in_cart(buyer_id)
+        prods_availability_list = cart_products_availability(cart_products)
+        return render_template('cart.html', availability_list=prods_availability_list)
+    return render_template('cart.html')
+
+
+@app.route('/buy', methods=['PUT'])
+def buy_products():
+    if request.method == 'PUT':
+        buyer_id = session['buyer_id']
+        cart_products = get_products_in_cart(buyer_id)
+        purchased_products_list = get_products_to_buy(cart_products, buyer_id)
+        if not purchased_products_list:
+            return render_template('cart.html', msg="No item is purchased")
         else:
-            return render_template('buy.html', msg=is_product_purchased)
-    return render_template('buy.html')
+            return render_template('cart.html', purchased_prods_list=purchased_products_list)
+    return render_template('cart.html')
 
 
