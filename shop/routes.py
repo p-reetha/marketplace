@@ -50,7 +50,7 @@ def login():
         if log_in == 'true':
             session['buyer_id'] = user_id
             session['buyer_name'] = user_name
-            return redirect(url_for('categories'))
+            return redirect(url_for('get_categories'))
         else:
             flash("Incorrect mail-id/password", "danger")
             return render_template('login.html')
@@ -66,14 +66,14 @@ def logout():
 @app.route('/categories', methods=['GET'])
 def get_categories():
     categories = get_categories_list()
-    return render_template('categories.html', list=categories)
+    return render_template('categories.html', categories_list=categories)
 
 
 @app.route('/products', methods=['GET'])
 def get_products_of_selected_category():
-    category = request.form.get('category')
+    category = request.args.get('category').lower()
     list_of_products = get_products(category)
-    return render_template('products.html', list=list_of_products)
+    return render_template('products.html', products_list=list_of_products)
 
 
 @app.route('/cart', methods=['POST'])
