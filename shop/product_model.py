@@ -21,6 +21,7 @@ class Product(Base):
 
 def get_categories_list():
     cat_list = db.query(Product.category).group_by(Product.category).all()
+    categories_list.clear()
     for category in cat_list:
         category = category[0].capitalize()
         categories_list.append(category)
@@ -29,6 +30,7 @@ def get_categories_list():
 
 def get_products(category):
     prod_list = db.query(Product).filter_by(category=category, prod_availability='yes').all()
+    products_list.clear()
     for product in prod_list:
         product_dict = {
             "prod_id": product.prod_id,
