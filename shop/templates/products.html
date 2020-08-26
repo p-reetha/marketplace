@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <a href="{{url_for('get_categories')}}"><img src="../images/back.png" alt="Back"></a>
+    <h1>Products</h1>
+    <form action="" method="GET">
+        <table class="table table-dark">
+            <thead>
+            <tr>
+                <th>
+                    Product Id
+                </th>
+                 <th>
+                    Product Category
+                </th>
+                 <th>
+                    Product Name
+                </th>
+                 <th>
+                    Product Price
+                </th>
+                 <th>
+                    Product Seller
+                </th>
+                 <th>
+                    Product Quantity
+                </th>
+            </tr>
+            </thead>
+            <tbody> {% for product in products_list %}
+            <tr>
+                <td>
+                    {{ product.prod_id }}
+                </td>
+                 <td>
+                    {{ product.category }}
+                </td>
+                 <td>
+                    {{ product.prod_name }}
+                </td>
+                 <td>
+                    {{ product.prod_price }}
+                </td>
+                 <td>
+                    {{ product.prod_seller }}
+                </td>
+                 <td>
+                    {{ product.prod_quantity}}
+                </td>
+            </tr> {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+{% endblock content %}
