@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-    <h1>Login</h1>
+     <div class="user_card">
+        <div class="login_header"><h2 >Login</h2></div>
     <form action="" method="POST">
         <div class="form-group">
             <input type="text" name="mail_id" class="form-control" placeholder="mail id" required>
@@ -9,7 +10,10 @@
         <div class="form-group">
             <input type="password" name="password" class="form-control" placeholder="password" required>
         </div>
-        <button class="btn btn-primary" type="submit">submit</button>
+        <div style="text-align: center">
+            <button class="btn btn-primary" type="submit">submit</button>
+        </div>
     </form>
+</div>
 </div>
 {% endblock content %}
