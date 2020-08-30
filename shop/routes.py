@@ -60,7 +60,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    return render_template('home.html')
+    return redirect(url_for('home'))
 
 
 @app.route('/categories', methods=['GET'])
@@ -76,56 +76,58 @@ def get_products_of_selected_category():
     return render_template('products.html', products_list=list_of_products)
 
 
-@app.route('/cart', methods=['POST'])
+@app.route('/addcart', methods=['GET', 'POST'])
 def add_to_cart():
-    if request.method == 'POST':
-        prod_id = request.form.get('prod_id') # need to pass hidden value of prod_id in UI
-        desired_quantity = request.form.get('desired_quantity')
+    if request.method == 'GET':
+        prod_id = request.args.get('prod_id')
+        desired_quantity = request.args.get('desired_quantity')
+        if desired_quantity == '':
+            desired_quantity = 1
+        if 'buyer_id' not in session:
+            flash('You must login first', 'danger')
+            return redirect(url_for('login'))
         buyer_id = session['buyer_id']
         is_product_added = add_product_to_cart(prod_id, desired_quantity, buyer_id)
-        if is_product_added == 'true':
-            return redirect(url_for('categories'))
-        else:
-            return render_template('cart.html', msg=is_product_added)
-    return render_template('cart.html')
+        return is_product_added, 204
 
 
 @app.route('/cart', methods=['GET'])
 def view_cart():
     if request.method == 'GET':
+        if 'buyer_id' not in session:
+            flash('You must login first', 'danger')
+            return redirect(url_for('login'))
         buyer_id = session['buyer_id']
         cart_products_list = get_products_in_cart(buyer_id)
-        print(cart_products_list)
         if cart_products_list != 0:
-            return render_template('cart.html', list=cart_products_list)
+            return render_template('cart.html', cart_prods_list=cart_products_list)
         else:
-            return render_template('cart.html', msg='cart is empty')
+            return redirect(url_for('view_cart', message_to_display='cart is empty'))
     return render_template('cart.html')
 
 
-@app.route('/cart', methods=['DELETE'])
+@app.route('/removecart', methods=['GET', 'POST'])
 def remove_from_cart():
-    if request.method == 'DELETE':
-        prod_id = request.form.get('prod_id')
+    if request.method == 'GET':
+        prod_id = request.args.get('prod_id')
         buyer_id = session['buyer_id']
         is_product_deleted = remove_product_from_cart(prod_id, buyer_id)
         if is_product_deleted == 'true':
-            return render_template('cart.html')
+            return redirect(url_for('view_cart'))
     return render_template('cart.html')
 
 
-@app.route('/cart', methods=['PUT'])
+@app.route('/updatecart', methods=['GET', 'POST'])
 def update_cart():
-    if request.method == 'PUT':
-        prod_id = request.form.get('prod_id')
-        desired_quantity = request.form['desired_quantity']
+    if request.method == 'GET':
         buyer_id = session['buyer_id']
+        prod_id = request.args.get('prod_id')
+        desired_quantity = request.args.get('desired_quantity')
         is_quantity_updated = update_cart_product_quantity(prod_id, desired_quantity, buyer_id)
         if is_quantity_updated == 'true':
-            return render_template('cart.html')
+            return redirect(url_for('view_cart', message_to_display='Quantity updated successfully'))
         else:
-            return render_template('cart.html', msg=is_quantity_updated)
-    return render_template('cart.html')
+            return redirect(url_for('view_cart', message_to_display=is_quantity_updated))
 
 
 @app.route('/buy', methods=['GET'])
@@ -134,7 +136,7 @@ def check_cart_products_availability():
         buyer_id = session['buyer_id']
         cart_products = get_products_in_cart(buyer_id)
         prods_availability_list = cart_products_availability(cart_products)
-        return render_template('cart.html', availability_list=prods_availability_list)
+        return redirect(url_for('view_cart', availability_list=prods_availability_list))
     return render_template('cart.html')
 
 
@@ -145,9 +147,9 @@ def buy_products():
         cart_products = get_products_in_cart(buyer_id)
         purchased_products_list = get_products_to_buy(cart_products, buyer_id)
         if not purchased_products_list:
-            return render_template('cart.html', msg="No item is purchased")
+            return redirect(url_for('view_cart', message_to_display="No item is purchased"))
         else:
-            return render_template('cart.html', purchased_prods_list=purchased_products_list)
+            return redirect(url_for('view_cart', purchased_prods_list=purchased_products_list))
     return render_template('cart.html')
 
 
