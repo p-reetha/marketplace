@@ -20,17 +20,22 @@ class Cart(Base):
 
 
 def add_product_to_cart(prod_id, desired_quantity, buyer_id):
-    obj = Cart(buyer_id=buyer_id, prod_id=prod_id, desired_quantity=desired_quantity)
     product = db.query(Product).filter_by(prod_id=prod_id).one()
     if product.prod_quantity < int(desired_quantity):
-        return str(product.prod_quantity) + ' items only available'
-    db.add(obj)
-    db.commit()
-    return 'true'
+        return 'Number of available items - ' + str(product.prod_quantity)
+    item_exists_in_cart = db.query(Cart).filter_by(buyer_id=buyer_id, prod_id=prod_id).scalar()
+    if item_exists_in_cart:
+        return 'This item already added to cart, you can add the quantity in the cart'
+    else:
+        obj = Cart(buyer_id=buyer_id, prod_id=prod_id, desired_quantity=desired_quantity)
+        db.add(obj)
+        db.commit()
+        return 'Added to cart successfully'
 
 
 def get_products_in_cart(buyer_id):
     cart_products_list = db.query(Cart).add_columns(Product.category, Product.prod_name, Product.price, Product.seller).filter(Product.prod_id == Cart.prod_id).filter(Cart.buyer_id == buyer_id).all()
+    products_in_cart.clear()
     for product in cart_products_list:
         product_dict = {
             "prod_id": product[0].prod_id,
@@ -51,14 +56,15 @@ def remove_product_from_cart(prod_id, buyer_id):
 
 
 def update_cart_product_quantity(prod_id, desired_quantity, buyer_id):
-    cart = db.query(Cart).filter_by(buyer_id=buyer_id, prod_id=prod_id).one()
     product = db.query(Product).filter_by(prod_id=prod_id).one()
     if product.prod_quantity < int(desired_quantity):
-        return str(product.prod_quantity) + ' items only available'
-    cart.desired_quantity = desired_quantity
-    db.add(cart)
-    db.commit()
-    return 'true'
+        return 'Number of available items - ' + str(product.prod_quantity)
+    else:
+        cart = db.query(Cart).filter_by(buyer_id=buyer_id, prod_id=prod_id).one()
+        cart.desired_quantity = desired_quantity
+        db.add(cart)
+        db.commit()
+        return 'true'
 
 
 def cart_products_availability(cart_products):
