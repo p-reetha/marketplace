@@ -1,0 +1,16 @@
+#cartnavbar
+{
+margin-left: 90%;
+}
+.user_card{
+	width: 350px;
+	background: #f39c12;
+	padding: 20px;
+	margin: 0 auto;
+	float: none;
+	margin-top: 80px;
+	border-radius: 10px;
+}
+.login_header{
+    text-align:center;
+}
