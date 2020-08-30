@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-     <div class="user_card">
+     <div class="user_card" style="height: 280px; border-radius: 10px;">
         <div class="login_header"><h2 >Login</h2></div>
-    <form action="" method="POST">
+    <form action="/login" method="POST">
         <div class="form-group">
             <input type="text" name="mail_id" class="form-control" placeholder="mail id" required>
         </div>
