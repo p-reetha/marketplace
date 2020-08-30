@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-    <h1>SignUp</h1>
-    <form action="" method="POST">
+    <div class="user_card" style="height: 430px; border-radius: 10px;">
+        <div class="login_header"><h2>SignUp</h2></div>
+    <form action="/signup" method="POST">
         <div class="form-group">
             <input type="text" name="buyer_name" class="form-control" placeholder="name" required>
         </div>
@@ -18,8 +19,10 @@
         <div class="form-group">
             <input type="password" name="confirm" class="form-control" placeholder="confirm password" required>
         </div>
+        <div style="text-align: center">
         <button class="btn btn-primary" type="submit">submit</button>
+        </div>
     </form>
-
+    </div>
 </div>
 {% endblock content %}
