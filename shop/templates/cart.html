@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <a href="{{url_for('get_categories')}}"><img src="static/images/back.png" alt="Back" title="Back" style="height: 25px; width: 25px; border: 2px solid #555;"></a>
+        <table class="table">
+            <thead>
+            <tr>
+                 <th>
+                    Product Category
+                </th>
+                 <th>
+                    Product Name
+                </th>
+                 <th>
+                    Product Price
+                </th>
+                 <th>
+                    Product Seller
+                </th>
+                 <th>
+                    Desired Quantity
+                </th>
+            </tr>
+            </thead>
+            <tbody> {% for product in cart_prods_list %}
+            <tr>
+                <form>
+                <td style="display: none;"> {{ product.prod_id }}
+                    <input id="prod_id" name="prod_id" value="{{ product.prod_id }}" style="display:none;">
+                </td>
+                 <td>
+                    {{ product.category }}
+                </td>
+                 <td>
+                    {{ product.prod_name }}
+                </td>
+                <td>
+                    {{ product.prod_price }}
+                </td>
+                 <td>
+                    {{ product.prod_seller }}
+                </td>
+                 <td>
+                    {{ product.desired_quantity}}
+                </td>
+                <td>
+                    <input type="number" name="desired_quantity" class="form-control" placeholder="Change Quantity">
+                </td>
+                <td>
+                    <button formaction="/updatecart" formmethod="GET" class="btn btn-primary" type="submit" onclick="showAlert()">
+                        Update
+                    </button>
+                </td>
+                <td>
+                    <button formaction="/removecart" formmethod="GET" class="btn btn-primary" type="submit">
+                        Remove
+                    </button>
+                </td>
+                </form>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    <div>
+        <a href="{{url_for('check_cart_products_availability')}}" onclick="showToBuy()">Buy</a>
+    </div>
+</div>
+<script>
+    function showAlert() {
+    alert({{message_to_display}});
+  }
+  function showAlert() {
+  alert({{availability_list}});
+  }
+</script>
+{% endblock content %}
