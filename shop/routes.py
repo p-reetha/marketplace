@@ -88,7 +88,8 @@ def add_to_cart():
             return redirect(url_for('login'))
         buyer_id = session['buyer_id']
         is_product_added = add_product_to_cart(prod_id, desired_quantity, buyer_id)
-        return is_product_added, 204
+        session['product_add_status'] = is_product_added
+        return '', 204
 
 
 @app.route('/cart', methods=['GET'])
@@ -99,10 +100,11 @@ def view_cart():
             return redirect(url_for('login'))
         buyer_id = session['buyer_id']
         cart_products_list = get_products_in_cart(buyer_id)
-        if cart_products_list != 0:
+        if cart_products_list:
             return render_template('cart.html', cart_prods_list=cart_products_list)
         else:
-            return redirect(url_for('view_cart', message_to_display='cart is empty'))
+            flash('Cart is empty!', 'info')
+            return render_template('cart.html')
     return render_template('cart.html')
 
 
@@ -124,10 +126,8 @@ def update_cart():
         prod_id = request.args.get('prod_id')
         desired_quantity = request.args.get('desired_quantity')
         is_quantity_updated = update_cart_product_quantity(prod_id, desired_quantity, buyer_id)
-        if is_quantity_updated == 'true':
-            return redirect(url_for('view_cart', message_to_display='Quantity updated successfully'))
-        else:
-            return redirect(url_for('view_cart', message_to_display=is_quantity_updated))
+        session['quantity_update_status'] = is_quantity_updated
+        return redirect(url_for('view_cart'))
 
 
 @app.route('/buy', methods=['GET'])
@@ -136,7 +136,8 @@ def check_cart_products_availability():
         buyer_id = session['buyer_id']
         cart_products = get_products_in_cart(buyer_id)
         prods_availability_list = cart_products_availability(cart_products)
-        return redirect(url_for('view_cart', availability_list=prods_availability_list))
+        session['availability_list'] = prods_availability_list
+        return redirect(url_for('view_cart'))
     return render_template('cart.html')
 
 
