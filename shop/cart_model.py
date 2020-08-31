@@ -64,7 +64,7 @@ def update_cart_product_quantity(prod_id, desired_quantity, buyer_id):
         cart.desired_quantity = desired_quantity
         db.add(cart)
         db.commit()
-        return 'true'
+        return 'Quantity updated successfully'
 
 
 def cart_products_availability(cart_products):
@@ -78,7 +78,7 @@ def cart_products_availability(cart_products):
         elif product.prod_quantity < cart_product['desired_quantity']:
             product_availability_dict = {
                 "product_name": product.prod_name,
-                "availability": str(product.prod_quantity) + ' items only available'
+                "availability": 'Number of available items - ' + str(product.prod_quantity)
             }
         else:
             product_availability_dict = {
