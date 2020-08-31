@@ -67,10 +67,10 @@
 </div>
 <script>
     function showAlert() {
-    alert({{message_to_display}});
+    alert('{{session['quantity_update_status']}}');
   }
   function showToBuy() {
-  alert({{availability_list}});
+  alert('{{session['availability_list']}}');
   }
 </script>
 {% endblock content %}
